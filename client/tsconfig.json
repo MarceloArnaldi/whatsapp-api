@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es5",                            /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "module": "commonjs",                       /* Specify what module code is generated. */
+    "moduleResolution": "node",                 /* Uncomment this setting to let tsc know this is a Node.js project */
+    "baseUrl": "src",                           /* Specify the base directory to resolve non-relative module names. */
+    "outDir": "./dist", 
+    "esModuleInterop": true,                    /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    "forceConsistentCasingInFileNames": true,   /* Ensure that casing is correct in imports. */
+    "allowJs": true,                            /* ncomment this setting to allow normal JS files to compile */
+    "strict": false,                            /* this allows us to build step by step into TS otherwise we would have lots of errors thrown for non-defined types and potential null values and the code would not compile to JS */
+    "resolveJsonModule": true                   /* Allows importing modules with a .json extension */
+  }
+}

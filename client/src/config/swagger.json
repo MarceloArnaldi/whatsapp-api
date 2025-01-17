@@ -1,0 +1,214 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "<nome-da-api-partner> - API Partner",
+        "description": "Esta API fornece recursos para o sistema <nome-da-api-partner> da Neomed <p> Sistema de laudo remoto de eletrocardiograma",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://<nome-da-api-partner>-vertical-hospital.azr-dev02.dasaexp.io/v1",
+            "description": "Development server"
+        },
+        {
+            "url": "https://<nome-da-api-partner>-vertical-hospital.azr-hml02.dasaexp.io/v1",
+            "description": "Homog server"
+        },
+        {
+            "url": "https://<nome-da-api-partner>-vertical-hospital.azr-prd02.dasaexp.io/v1",
+            "description": "Production server"
+        },
+        {
+            "url": "https://id.azr-hml.dasaexp.io/auth/realms/Funcionarios/protocol/openid-connect",
+            "description": "Development and Homog token server"
+        }
+    ],
+    "paths": {
+        "/token": {
+            "post": {
+                "summary": "Recupera o token para uso nos recursos da API",
+                "description": "O endpoint do token é diferente da API, selecione o servidor do token.",
+                "tags": ["Autorização"],
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "client_id": {
+                                        "description": "Entre com o Cliente ID fornecido.",
+                                        "type": "string"
+                                    },
+                                    "client_secret": {
+                                        "description": "Entre com o Cliente Secret fornecido.",
+                                        "type": "string"
+                                    },
+                                    "grant_type": {
+                                        "description": "Entre com o grant type.",
+                                        "example": "client_credentials",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["client_id", "client_secret", "grant_type"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/tokenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/erroToken"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/erroToken"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/atendimentos": {
+            "get": {
+                "summary": "Lista de Atendimento Dia",
+                "description": "Retorna todos os atendimntos da unidade no dia.",
+                "tags": ["Atendimento"],
+                "parameters": [{
+                        "in": "query",
+                        "name": "unidade",
+                        "description": "Entre com a sigla da unidade.",
+                        "required": true,
+                        "example": "CHN",
+                        "schema": { "type": "string" }
+                    },
+                    {
+                        "in": "query",
+                        "name": "cd_atendimento",
+                        "description": "Entre com código do atendimento.",
+                        "example": "5379611",
+                        "required": true,
+                        "schema": { "type": "number" }
+                    },
+                    {
+                        "in": "query",
+                        "name": "cd_paciente",
+                        "description": "Entre com código do paciente.",
+                        "example": "3573387",
+                        "schema": { "type": "number" }
+                    },
+                    {
+                        "in": "header",
+                        "name": "Authorization",
+                        "description": "Entre com o token.",
+                        "required": true,
+                        "schema": { "type": "string" }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/AtendimentoDia"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/erro422"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [{ "api_key": [] }]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AtendimentoDia": {
+                "type": "object",
+                "properties": {
+                    "Dados": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "HR_ATENDIMENTO"    : { "type": "number" },
+                                "CD_ATENDIMENTO"    : { "type": "number" },
+                                "CD_PACIENTE"       : { "type": "number" },
+                                "NM_SETOR"          : { "type": "string" },
+                                "DS_LEITO"          : { "type": "string" },
+                                "DS_UNID_INT"       : { "type": "string" }
+                            }
+                        }
+                    }
+                }
+            },
+            "tokenResponse": {
+                "type": "object",
+                "properties": {
+                    "access_token"      : { "type": "string" },
+                    "expires_in"        : { "type": "number" },
+                    "refresh_expires_in": { "type": "number" },
+                    "token_type"        : { "type": "string" },
+                    "not-before-policy" : { "type": "number" },
+                    "scope"             : { "type": "string" }
+                }
+            },
+            "erro422": {
+                "type": "object",
+                "properties": {
+                    "erro": {
+                        "type": "string"
+                    }
+                }
+            },
+            "erroToken": {
+                "type": "object",
+                "properties": {
+                    "error": {"type": "string"},
+                    "error_description": {"type": "string"}
+                }
+            }
+        },
+        "securitySchemes": {
+            "api_key": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}

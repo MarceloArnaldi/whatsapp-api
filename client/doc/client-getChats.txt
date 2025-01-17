@@ -1,0 +1,9 @@
+client/getChats/<session-id>
+chats: [
+    {
+        id/user: <numero do telefone>,
+        name: <nome do usuario>,
+        lastMessage/_data/body
+        lastMessage/_data/t        
+    }
+]
